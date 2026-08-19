@@ -1,0 +1,10 @@
+import { motion } from 'framer-motion'
+import { RotateCcw, Share2, BookHeart } from 'lucide-react'
+import type { Bouquet } from '../types'
+import { BouquetArt } from './Bouquet'
+import { KawaiiCat } from '../components/KawaiiCat'
+import { wishes } from '../data'
+
+export function Final({ bouquet, onMemories, onRestart, onShare }: { bouquet:Bouquet; onMemories:()=>void; onRestart:()=>void; onShare:()=>void }) {
+  return <main className="final-screen"><div className="confetti" aria-hidden="true">{Array.from({length:28},(_,i)=><i key={i} style={{'--i':i} as React.CSSProperties}/>)}</div><section className="final-hero"><motion.p initial={{opacity:0}} animate={{opacity:1}} className="eyebrow">O JARDIM ESTÁ COMPLETO</motion.p><motion.h1 initial={{scale:.7}} animate={{scale:1}}>Parabéns pelos seus<br/><em>18 anos, Haysla!</em> 🌷</motion.h1><div className="final-gift"><KawaiiCat/><BouquetArt value={bouquet} compact/></div><p className="final-message">Eu queria te dar algo diferente, então preparei esta pequena aventura especialmente para você. Que essa nova fase seja cheia de sonhos realizados, pessoas boas, momentos inesquecíveis e muitos motivos para sorrir. Feliz aniversário!</p><p className="signature">Com carinho, <strong>Gustavo</strong> 💗</p><div className="final-actions"><button className="primary" onClick={onMemories}><BookHeart/> Ver meu Jardim de Memórias</button><button className="secondary" onClick={onShare}><Share2/> Compartilhar</button><button className="text-button" onClick={onRestart}><RotateCcw/> Jogar novamente</button></div></section><section className="wishes"><p className="eyebrow">UM DESEJO PARA CADA ANO</p><h2>18 desejos para sua nova fase</h2><div className="wish-grid">{wishes.map((wish,i)=><motion.article key={wish} initial={{opacity:0,scale:.5,y:20}} whileInView={{opacity:1,scale:1,y:0}} viewport={{once:true}} transition={{delay:(i%6)*.08}}><span>🌷</span><small>{String(i+1).padStart(2,'0')}</small><strong>{wish}</strong></motion.article>)}</div></section></main>
+}
