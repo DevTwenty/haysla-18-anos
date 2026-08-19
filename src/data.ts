@@ -14,16 +14,20 @@ export const tulips = [
 
 type Point = { x: number; y: number }
 
-export function findTulipOnPath(from: Point, to: Point, collected: number[], radius = 8) {
-  const dx = to.x - from.x
-  const dy = to.y - from.y
+export function findTulipsOnPath(from: Point, to: Point, collected: number[], bounds = { width: 1000, height: 600 }, radius = 46) {
+  const start = { x: from.x / 100 * bounds.width, y: from.y / 100 * bounds.height }
+  const end = { x: to.x / 100 * bounds.width, y: to.y / 100 * bounds.height }
+  const dx = end.x - start.x
+  const dy = end.y - start.y
   const lengthSquared = dx * dx + dy * dy
 
-  return tulips.findIndex(([x, y], index) => {
-    if (collected.includes(index)) return false
-    const progress = lengthSquared === 0 ? 0 : Math.max(0, Math.min(1, ((x - from.x) * dx + (y - from.y) * dy) / lengthSquared))
-    const nearestX = from.x + progress * dx
-    const nearestY = from.y + progress * dy
-    return Math.hypot(x - nearestX, y - nearestY) <= radius
-  })
+  return tulips.flatMap(([percentX, percentY], index) => {
+    if (collected.includes(index)) return []
+    const x = percentX / 100 * bounds.width
+    const y = percentY / 100 * bounds.height
+    const progress = lengthSquared === 0 ? 0 : Math.max(0, Math.min(1, ((x - start.x) * dx + (y - start.y) * dy) / lengthSquared))
+    const nearestX = start.x + progress * dx
+    const nearestY = start.y + progress * dy
+    return Math.hypot(x - nearestX, y - nearestY) <= radius ? [{ index, progress }] : []
+  }).sort((a,b) => a.progress - b.progress).map(hit => hit.index)
 }
