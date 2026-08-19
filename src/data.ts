@@ -11,3 +11,19 @@ export const tulips = [
   [11, 15], [31, 11], [55, 16], [78, 10], [91, 25], [17, 35], [43, 31], [68, 36], [84, 46],
   [8, 60], [28, 55], [52, 51], [74, 62], [93, 68], [18, 81], [40, 73], [62, 86], [84, 84],
 ] as const
+
+type Point = { x: number; y: number }
+
+export function findTulipOnPath(from: Point, to: Point, collected: number[], radius = 8) {
+  const dx = to.x - from.x
+  const dy = to.y - from.y
+  const lengthSquared = dx * dx + dy * dy
+
+  return tulips.findIndex(([x, y], index) => {
+    if (collected.includes(index)) return false
+    const progress = lengthSquared === 0 ? 0 : Math.max(0, Math.min(1, ((x - from.x) * dx + (y - from.y) * dy) / lengthSquared))
+    const nearestX = from.x + progress * dx
+    const nearestY = from.y + progress * dy
+    return Math.hypot(x - nearestX, y - nearestY) <= radius
+  })
+}

@@ -5,7 +5,13 @@ import type { Bouquet as BouquetType } from '../types'
 export function BouquetArt({ value, compact=false }: { value: BouquetType; compact?: boolean }) {
   const ribbon = value.ribbon === 'Rosa' ? '#ef7194' : value.ribbon === 'Lilás' ? '#9b7ac7' : '#c53f50'
   const wrap = value.wrap === 'Creme' ? '#f6dec0' : value.wrap === 'Rosa' ? '#f6b9c7' : '#e6c6eb'
-  return <motion.div className={`bouquet-art ${compact?'compact':''}`} initial={{scale:.8}} animate={{scale:1,rotate:[-1.5,1.5,-1.5]}} transition={{rotate:{repeat:Infinity,duration:3}}}><div className="bouquet-blooms">{Array.from({length:18},(_,i)=><span key={i} style={{'--i':i} as React.CSSProperties}>🌷</span>)}</div><div className="bouquet-wrap" style={{background:wrap}}/><div className="bouquet-ribbon" style={{background:ribbon}}>♡</div><div className="bouquet-accent">{value.accent==='hearts'?'♥ ♥ ♥':'★ ★ ★'}</div></motion.div>
+  const flowers = Array.from({length:18}, (_, i) => {
+    const row = i < 5 ? 0 : i < 12 ? 1 : 2
+    const indexInRow = i - [0, 5, 12][row]
+    const count = [5, 7, 6][row]
+    return { x: 50 + (indexInRow - (count - 1) / 2) * 11.5, y: 42 + row * 43, rotate: (i % 5 - 2) * 4, scale: row === 0 ? .9 : 1 }
+  })
+  return <motion.div className={`bouquet-art ${compact?'compact':''}`} initial={{scale:.8}} animate={{scale:1,rotate:[-1.5,1.5,-1.5]}} transition={{rotate:{repeat:Infinity,duration:3}}}><div className="bouquet-stems">{flowers.map((flower,i)=><i key={i} style={{left:`${flower.x}%`,top:flower.y+22,transform:`rotate(${(flower.x-50)*-.16}deg)`}}/>)}</div><div className="bouquet-wrap" style={{'--wrap':wrap} as React.CSSProperties}/><div className="bouquet-blooms">{flowers.map((flower,i)=><span key={i} style={{left:`${flower.x}%`,top:flower.y,transform:`translate(-50%,-50%) rotate(${flower.rotate}deg) scale(${flower.scale})`}}><i className="mini-bloom"><b/><b/><b/></i></span>)}</div><div className="bouquet-ribbon" style={{'--ribbon':ribbon} as React.CSSProperties}><i/><b>♡</b><i/></div><div className={`bouquet-accent ${value.accent}`}>{value.accent==='hearts'?'♥  ♥  ♥':'★  ★  ★'}</div></motion.div>
 }
 
 export function Bouquet({ value, onChange, onDone }: { value: BouquetType; onChange:(v:BouquetType)=>void; onDone:()=>void }) {
