@@ -1,7 +1,7 @@
 import type { SavedGame } from './types'
 
 export const STORAGE_KEY = 'haysla-garden-v1'
-export const defaults: SavedGame = { version: 1, collected: [], messages: [], bestTime: null, sound: true, volume: 0.45, bouquet: { ribbon: 'Rosa', wrap: 'Creme', accent: 'hearts' }, completed: false, lastPlayed: null }
+export const defaults: SavedGame = { version: 1, collected: [], messages: [], bestTime: null, sound: true, volume: 0.45, bouquet: { ribbon: 'Rosa', wrap: 'Creme', accent: 'hearts', flowerColor: 'Rosa', pattern: 'Liso', foliage: 'Folhas' }, completed: false, lastPlayed: null }
 
 export function loadGame(): SavedGame {
   try {
@@ -15,6 +15,7 @@ export function loadGame(): SavedGame {
       messages: Array.isArray(value.messages) ? [...new Set(value.messages.filter((x): x is number => Number.isInteger(x) && x >= 0 && x < 6))] : [],
       volume: typeof value.volume === 'number' ? Math.max(0, Math.min(1, value.volume)) : defaults.volume,
       sound: typeof value.sound === 'boolean' ? value.sound : defaults.sound,
+      bouquet: { ...defaults.bouquet, ...(value.bouquet || {}) },
     }
   } catch { return defaults }
 }
